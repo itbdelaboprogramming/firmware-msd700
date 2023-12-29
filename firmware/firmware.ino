@@ -31,7 +31,8 @@ In "loop()":
 */
 #include <Wire.h>
 #include <ros.h>
-#include <slam_itbdelabo/HardwareCommand.h>
+#include <ros_msd700_msgs/HardwareCommand.h>
+#include <ros_msd700_msgs/HardwareState.h>
 #include <Servo.h>
 
 #include "Motor.h"
@@ -91,6 +92,10 @@ In "loop()":
 #define MAX_SERVO_POS 175
 #define MIN_SERVO_POS 125
 #define INCREMENT_POS 10
+
+// ULTRASONIC
+#define UART2_RX 17
+#define UART2_TX 16
 
 // Constants
 #define LOOP_TIME 10                    // in milliseconds
@@ -196,25 +201,28 @@ int servo_pos = MAX_SERVO_POS;
 //ROS Communication
 ros::NodeHandle nh;
 
-// Varibles for hardware command
+// Variables for hardware command
 uint8_t movement_command_ = 0;
 uint8_t cam_angle_command_ = 0;
 float right_motor_speed_ = 0;
 float left_motor_speed_ = 0;
 
-// Callback function that handles data subscribing
-void callback_function( const slam_itbdelabo::HardwareCommand& msg){
+// Variables for hardware state
+float ult_direction  = 0.0;
+float ult_distance = 0.0;
+
+// Create publisher
+ros_msd700_msgs::HardwareState hardware_state_msg;
+ros::Publisher hardware_state_pub("hardware_state", &hardware_state_msg);
+
+// Create subscriber
+void hardware_command_callback(const ros_msd700_msgs::HardwareCommand& msg){
   movement_command_ = msg.movement_command;
   cam_angle_command_ = msg.cam_angle_command;
   right_motor_speed_ = msg.right_motor_speed;
   left_motor_speed_ = msg.left_motor_speed;
-
-//  String OmegaString = String(String(dt) + ", " + String(current_channel) + ", Left RPM: " + String(left_motor_speed_,2) + " RPM, Right RPM: " + String(right_motor_speed_,2) + " RPM.");
-//  char OmegaInfo[100]; OmegaString.toCharArray(OmegaInfo, 100);
-//  nh.loginfo(OmegaInfo);
 }
-// Create subscriber for hardware command info
-ros::Subscriber<slam_itbdelabo::HardwareCommand> sub("hardware_command", callback_function);
+ros::Subscriber<ros_msd700_msgs::HardwareCommand> hardware_command_sub("hardware_command", hardware_command_callback);
 
 void setup(){
     Serial.begin(57600);
@@ -222,7 +230,8 @@ void setup(){
 
     //Initiate ROS node
     nh.initNode();
-    nh.subscribe(sub);
+    nh.advertise(hardware_state_pub);
+    nh.subscribe(hardware_command_sub);
     
     RightMotor.begin();
     LeftMotor.begin();
@@ -242,6 +251,9 @@ void setup(){
     camServo.attach(CAM_SERVO);
 
     debugHeader();
+
+    pinMode(UART2_RX, INPUT);
+    pinMode(UART2_TX, INPUT);
 
     delay(2000);
 }
@@ -551,6 +563,16 @@ void write_servo(){
       camServo.write(servo_pos);
     }
   }
+}
+
+void update_ultrasonic_data(){
+  // TODO: get ultrasonic data
+  // ult_distance = map(pulseIn(UART2_RX, HIGH), 1000, 2000, 0, 256);
+  // ult_distance = ult_distance / 32.0;
+  // ult_direction = map(pulseIn(UART2_TX, HIGH), 1000, 2000, -90, 360);
+  hardware_state_msg.ultrasonic_target_direction = ult_direction;
+  hardware_state_msg.ultrasonic_target_distance = ult_distance;
+  hardware_state_pub.publish(&hardware_state_msg);
 }
 
 void debugHeader(){
