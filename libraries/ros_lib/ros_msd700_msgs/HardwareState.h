@@ -12,73 +12,69 @@ namespace ros_msd700_msgs
   class HardwareState : public ros::Msg
   {
     public:
-      typedef float _ultrasonic_target_direction_type;
-      _ultrasonic_target_direction_type ultrasonic_target_direction;
-      typedef float _ultrasonic_target_distance_type;
-      _ultrasonic_target_distance_type ultrasonic_target_distance;
+      uint32_t ch_ultrasonic_distances_length;
+      typedef float _ch_ultrasonic_distances_type;
+      _ch_ultrasonic_distances_type st_ch_ultrasonic_distances;
+      _ch_ultrasonic_distances_type * ch_ultrasonic_distances;
 
     HardwareState():
-      ultrasonic_target_direction(0),
-      ultrasonic_target_distance(0)
+      ch_ultrasonic_distances_length(0), st_ch_ultrasonic_distances(), ch_ultrasonic_distances(nullptr)
     {
     }
 
     virtual int serialize(unsigned char *outbuffer) const override
     {
       int offset = 0;
+      *(outbuffer + offset + 0) = (this->ch_ultrasonic_distances_length >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (this->ch_ultrasonic_distances_length >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (this->ch_ultrasonic_distances_length >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (this->ch_ultrasonic_distances_length >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distances_length);
+      for( uint32_t i = 0; i < ch_ultrasonic_distances_length; i++){
       union {
         float real;
         uint32_t base;
-      } u_ultrasonic_target_direction;
-      u_ultrasonic_target_direction.real = this->ultrasonic_target_direction;
-      *(outbuffer + offset + 0) = (u_ultrasonic_target_direction.base >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (u_ultrasonic_target_direction.base >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (u_ultrasonic_target_direction.base >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (u_ultrasonic_target_direction.base >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->ultrasonic_target_direction);
-      union {
-        float real;
-        uint32_t base;
-      } u_ultrasonic_target_distance;
-      u_ultrasonic_target_distance.real = this->ultrasonic_target_distance;
-      *(outbuffer + offset + 0) = (u_ultrasonic_target_distance.base >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (u_ultrasonic_target_distance.base >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (u_ultrasonic_target_distance.base >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (u_ultrasonic_target_distance.base >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->ultrasonic_target_distance);
+      } u_ch_ultrasonic_distancesi;
+      u_ch_ultrasonic_distancesi.real = this->ch_ultrasonic_distances[i];
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distancesi.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distancesi.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distancesi.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distancesi.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distances[i]);
+      }
       return offset;
     }
 
     virtual int deserialize(unsigned char *inbuffer) override
     {
       int offset = 0;
+      uint32_t ch_ultrasonic_distances_lengthT = ((uint32_t) (*(inbuffer + offset))); 
+      ch_ultrasonic_distances_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
+      ch_ultrasonic_distances_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
+      ch_ultrasonic_distances_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
+      offset += sizeof(this->ch_ultrasonic_distances_length);
+      if(ch_ultrasonic_distances_lengthT > ch_ultrasonic_distances_length)
+        this->ch_ultrasonic_distances = (float*)realloc(this->ch_ultrasonic_distances, ch_ultrasonic_distances_lengthT * sizeof(float));
+      ch_ultrasonic_distances_length = ch_ultrasonic_distances_lengthT;
+      for( uint32_t i = 0; i < ch_ultrasonic_distances_length; i++){
       union {
         float real;
         uint32_t base;
-      } u_ultrasonic_target_direction;
-      u_ultrasonic_target_direction.base = 0;
-      u_ultrasonic_target_direction.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      u_ultrasonic_target_direction.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      u_ultrasonic_target_direction.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
-      u_ultrasonic_target_direction.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
-      this->ultrasonic_target_direction = u_ultrasonic_target_direction.real;
-      offset += sizeof(this->ultrasonic_target_direction);
-      union {
-        float real;
-        uint32_t base;
-      } u_ultrasonic_target_distance;
-      u_ultrasonic_target_distance.base = 0;
-      u_ultrasonic_target_distance.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      u_ultrasonic_target_distance.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      u_ultrasonic_target_distance.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
-      u_ultrasonic_target_distance.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
-      this->ultrasonic_target_distance = u_ultrasonic_target_distance.real;
-      offset += sizeof(this->ultrasonic_target_distance);
+      } u_st_ch_ultrasonic_distances;
+      u_st_ch_ultrasonic_distances.base = 0;
+      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->st_ch_ultrasonic_distances = u_st_ch_ultrasonic_distances.real;
+      offset += sizeof(this->st_ch_ultrasonic_distances);
+        memcpy( &(this->ch_ultrasonic_distances[i]), &(this->st_ch_ultrasonic_distances), sizeof(float));
+      }
      return offset;
     }
 
     virtual const char * getType() override { return "ros_msd700_msgs/HardwareState"; };
-    virtual const char * getMD5() override { return "f4bf79318c4e12fa88888a73af77187d"; };
+    virtual const char * getMD5() override { return "c2418c022361025078116c2fb6c35f76"; };
 
   };
 

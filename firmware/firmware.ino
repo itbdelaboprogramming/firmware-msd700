@@ -567,11 +567,9 @@ void write_servo(){
 
 void update_ultrasonic_data(){
   // TODO: get ultrasonic data
-  // ult_distance = map(pulseIn(UART2_RX, HIGH), 1000, 2000, 0, 256);
-  // ult_distance = ult_distance / 32.0;
-  // ult_direction = map(pulseIn(UART2_TX, HIGH), 1000, 2000, -90, 360);
-  hardware_state_msg.ultrasonic_target_direction = ult_direction;
-  hardware_state_msg.ultrasonic_target_distance = ult_distance;
+  for (int i=0 ; i<8 ; i++) {
+    hardware_state_msg.ch_ultrasonic_distances[i] = 0.0;
+  }
   hardware_state_pub.publish(&hardware_state_msg);
 }
 
