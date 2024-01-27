@@ -565,11 +565,13 @@ void write_servo(){
   }
 }
 
-void update_ultrasonic_data(){
+void update_hardware_state(){
   // TODO: get ultrasonic data
   for (int i=0 ; i<8 ; i++) {
     hardware_state_msg.ch_ultrasonic_distances[i] = 0.0;
   }
+  hardware_state_msg.right_motor_pulse_delta = RightEncoder.getDeltaPulse();
+  hardware_state_msg.left_motor_pulse_delta = LeftEncoder.getDeltaPulse();
   hardware_state_pub.publish(&hardware_state_msg);
 }
 

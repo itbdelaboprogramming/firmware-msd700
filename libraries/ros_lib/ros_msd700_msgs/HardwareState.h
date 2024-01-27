@@ -16,9 +16,15 @@ namespace ros_msd700_msgs
       typedef float _ch_ultrasonic_distances_type;
       _ch_ultrasonic_distances_type st_ch_ultrasonic_distances;
       _ch_ultrasonic_distances_type * ch_ultrasonic_distances;
+      typedef int32_t _right_motor_pulse_delta_type;
+      _right_motor_pulse_delta_type right_motor_pulse_delta;
+      typedef int32_t _left_motor_pulse_delta_type;
+      _left_motor_pulse_delta_type left_motor_pulse_delta;
 
     HardwareState():
-      ch_ultrasonic_distances_length(0), st_ch_ultrasonic_distances(), ch_ultrasonic_distances(nullptr)
+      ch_ultrasonic_distances_length(0), st_ch_ultrasonic_distances(), ch_ultrasonic_distances(nullptr),
+      right_motor_pulse_delta(0),
+      left_motor_pulse_delta(0)
     {
     }
 
@@ -42,6 +48,26 @@ namespace ros_msd700_msgs
       *(outbuffer + offset + 3) = (u_ch_ultrasonic_distancesi.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->ch_ultrasonic_distances[i]);
       }
+      union {
+        int32_t real;
+        uint32_t base;
+      } u_right_motor_pulse_delta;
+      u_right_motor_pulse_delta.real = this->right_motor_pulse_delta;
+      *(outbuffer + offset + 0) = (u_right_motor_pulse_delta.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_right_motor_pulse_delta.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_right_motor_pulse_delta.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_right_motor_pulse_delta.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->right_motor_pulse_delta);
+      union {
+        int32_t real;
+        uint32_t base;
+      } u_left_motor_pulse_delta;
+      u_left_motor_pulse_delta.real = this->left_motor_pulse_delta;
+      *(outbuffer + offset + 0) = (u_left_motor_pulse_delta.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_left_motor_pulse_delta.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_left_motor_pulse_delta.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_left_motor_pulse_delta.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->left_motor_pulse_delta);
       return offset;
     }
 
@@ -70,11 +96,33 @@ namespace ros_msd700_msgs
       offset += sizeof(this->st_ch_ultrasonic_distances);
         memcpy( &(this->ch_ultrasonic_distances[i]), &(this->st_ch_ultrasonic_distances), sizeof(float));
       }
+      union {
+        int32_t real;
+        uint32_t base;
+      } u_right_motor_pulse_delta;
+      u_right_motor_pulse_delta.base = 0;
+      u_right_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_right_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_right_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_right_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->right_motor_pulse_delta = u_right_motor_pulse_delta.real;
+      offset += sizeof(this->right_motor_pulse_delta);
+      union {
+        int32_t real;
+        uint32_t base;
+      } u_left_motor_pulse_delta;
+      u_left_motor_pulse_delta.base = 0;
+      u_left_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_left_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_left_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_left_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->left_motor_pulse_delta = u_left_motor_pulse_delta.real;
+      offset += sizeof(this->left_motor_pulse_delta);
      return offset;
     }
 
     virtual const char * getType() override { return "ros_msd700_msgs/HardwareState"; };
-    virtual const char * getMD5() override { return "c2418c022361025078116c2fb6c35f76"; };
+    virtual const char * getMD5() override { return "175a063e8d408168abc6b783eb7af198"; };
 
   };
 

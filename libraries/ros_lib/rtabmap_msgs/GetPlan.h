@@ -5,25 +5,25 @@
 #include <stdlib.h>
 #include "ros/msg.h"
 #include "geometry_msgs/PoseStamped.h"
-#include "nav_msgs/Path.h"
+#include "rtabmap_msgs/Path.h"
 
-namespace nav_msgs
+namespace rtabmap_msgs
 {
 
-static const char GETPLAN[] = "nav_msgs/GetPlan";
+static const char GETPLAN[] = "rtabmap_msgs/GetPlan";
 
   class GetPlanRequest : public ros::Msg
   {
     public:
-      typedef geometry_msgs::PoseStamped _start_type;
-      _start_type start;
+      typedef int32_t _goal_node_type;
+      _goal_node_type goal_node;
       typedef geometry_msgs::PoseStamped _goal_type;
       _goal_type goal;
       typedef float _tolerance_type;
       _tolerance_type tolerance;
 
     GetPlanRequest():
-      start(),
+      goal_node(0),
       goal(),
       tolerance(0)
     {
@@ -32,7 +32,16 @@ static const char GETPLAN[] = "nav_msgs/GetPlan";
     virtual int serialize(unsigned char *outbuffer) const override
     {
       int offset = 0;
-      offset += this->start.serialize(outbuffer + offset);
+      union {
+        int32_t real;
+        uint32_t base;
+      } u_goal_node;
+      u_goal_node.real = this->goal_node;
+      *(outbuffer + offset + 0) = (u_goal_node.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_goal_node.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_goal_node.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_goal_node.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->goal_node);
       offset += this->goal.serialize(outbuffer + offset);
       union {
         float real;
@@ -50,7 +59,17 @@ static const char GETPLAN[] = "nav_msgs/GetPlan";
     virtual int deserialize(unsigned char *inbuffer) override
     {
       int offset = 0;
-      offset += this->start.deserialize(inbuffer + offset);
+      union {
+        int32_t real;
+        uint32_t base;
+      } u_goal_node;
+      u_goal_node.base = 0;
+      u_goal_node.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_goal_node.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_goal_node.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_goal_node.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->goal_node = u_goal_node.real;
+      offset += sizeof(this->goal_node);
       offset += this->goal.deserialize(inbuffer + offset);
       union {
         float real;
@@ -67,14 +86,14 @@ static const char GETPLAN[] = "nav_msgs/GetPlan";
     }
 
     virtual const char * getType() override { return GETPLAN; };
-    virtual const char * getMD5() override { return "e25a43e0752bcca599a8c2eef8282df8"; };
+    virtual const char * getMD5() override { return "93cea387b2aa9245414c000574ff1591"; };
 
   };
 
   class GetPlanResponse : public ros::Msg
   {
     public:
-      typedef nav_msgs::Path _plan_type;
+      typedef rtabmap_msgs::Path _plan_type;
       _plan_type plan;
 
     GetPlanResponse():
@@ -97,7 +116,7 @@ static const char GETPLAN[] = "nav_msgs/GetPlan";
     }
 
     virtual const char * getType() override { return GETPLAN; };
-    virtual const char * getMD5() override { return "0002bc113c0259d71f6cf8cbc9430e18"; };
+    virtual const char * getMD5() override { return "0412b9858bfcee4b2ee4fbf2f8eb5028"; };
 
   };
 
