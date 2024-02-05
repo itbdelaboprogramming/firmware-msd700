@@ -272,6 +272,7 @@ void loop(){
 
         update_failsafe();
         update_cmd();
+        update_hardware_state();
         
         time_last = time_now;
         debug();
