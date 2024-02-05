@@ -4,9 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ros/msg.h"
+#include "nav_msgs/Path.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "ros/time.h"
-#include "nav_msgs/Path.h"
 
 namespace hector_nav_msgs
 {

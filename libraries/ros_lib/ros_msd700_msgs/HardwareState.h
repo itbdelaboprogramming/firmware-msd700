@@ -12,10 +12,22 @@ namespace ros_msd700_msgs
   class HardwareState : public ros::Msg
   {
     public:
-      uint32_t ch_ultrasonic_distances_length;
-      typedef float _ch_ultrasonic_distances_type;
-      _ch_ultrasonic_distances_type st_ch_ultrasonic_distances;
-      _ch_ultrasonic_distances_type * ch_ultrasonic_distances;
+      typedef float _ch_ultrasonic_distance_1_type;
+      _ch_ultrasonic_distance_1_type ch_ultrasonic_distance_1;
+      typedef float _ch_ultrasonic_distance_2_type;
+      _ch_ultrasonic_distance_2_type ch_ultrasonic_distance_2;
+      typedef float _ch_ultrasonic_distance_3_type;
+      _ch_ultrasonic_distance_3_type ch_ultrasonic_distance_3;
+      typedef float _ch_ultrasonic_distance_4_type;
+      _ch_ultrasonic_distance_4_type ch_ultrasonic_distance_4;
+      typedef float _ch_ultrasonic_distance_5_type;
+      _ch_ultrasonic_distance_5_type ch_ultrasonic_distance_5;
+      typedef float _ch_ultrasonic_distance_6_type;
+      _ch_ultrasonic_distance_6_type ch_ultrasonic_distance_6;
+      typedef float _ch_ultrasonic_distance_7_type;
+      _ch_ultrasonic_distance_7_type ch_ultrasonic_distance_7;
+      typedef float _ch_ultrasonic_distance_8_type;
+      _ch_ultrasonic_distance_8_type ch_ultrasonic_distance_8;
       typedef int32_t _right_motor_pulse_delta_type;
       _right_motor_pulse_delta_type right_motor_pulse_delta;
       typedef int32_t _left_motor_pulse_delta_type;
@@ -24,7 +36,14 @@ namespace ros_msd700_msgs
       _heading_type heading;
 
     HardwareState():
-      ch_ultrasonic_distances_length(0), st_ch_ultrasonic_distances(), ch_ultrasonic_distances(nullptr),
+      ch_ultrasonic_distance_1(0),
+      ch_ultrasonic_distance_2(0),
+      ch_ultrasonic_distance_3(0),
+      ch_ultrasonic_distance_4(0),
+      ch_ultrasonic_distance_5(0),
+      ch_ultrasonic_distance_6(0),
+      ch_ultrasonic_distance_7(0),
+      ch_ultrasonic_distance_8(0),
       right_motor_pulse_delta(0),
       left_motor_pulse_delta(0),
       heading(0)
@@ -34,23 +53,86 @@ namespace ros_msd700_msgs
     virtual int serialize(unsigned char *outbuffer) const override
     {
       int offset = 0;
-      *(outbuffer + offset + 0) = (this->ch_ultrasonic_distances_length >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (this->ch_ultrasonic_distances_length >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (this->ch_ultrasonic_distances_length >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (this->ch_ultrasonic_distances_length >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->ch_ultrasonic_distances_length);
-      for( uint32_t i = 0; i < ch_ultrasonic_distances_length; i++){
       union {
         float real;
         uint32_t base;
-      } u_ch_ultrasonic_distancesi;
-      u_ch_ultrasonic_distancesi.real = this->ch_ultrasonic_distances[i];
-      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distancesi.base >> (8 * 0)) & 0xFF;
-      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distancesi.base >> (8 * 1)) & 0xFF;
-      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distancesi.base >> (8 * 2)) & 0xFF;
-      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distancesi.base >> (8 * 3)) & 0xFF;
-      offset += sizeof(this->ch_ultrasonic_distances[i]);
-      }
+      } u_ch_ultrasonic_distance_1;
+      u_ch_ultrasonic_distance_1.real = this->ch_ultrasonic_distance_1;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_1.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_1.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_1.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_1.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_1);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_2;
+      u_ch_ultrasonic_distance_2.real = this->ch_ultrasonic_distance_2;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_2.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_2.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_2.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_2.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_2);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_3;
+      u_ch_ultrasonic_distance_3.real = this->ch_ultrasonic_distance_3;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_3.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_3.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_3.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_3.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_3);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_4;
+      u_ch_ultrasonic_distance_4.real = this->ch_ultrasonic_distance_4;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_4.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_4.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_4.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_4.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_4);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_5;
+      u_ch_ultrasonic_distance_5.real = this->ch_ultrasonic_distance_5;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_5.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_5.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_5.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_5.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_5);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_6;
+      u_ch_ultrasonic_distance_6.real = this->ch_ultrasonic_distance_6;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_6.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_6.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_6.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_6.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_6);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_7;
+      u_ch_ultrasonic_distance_7.real = this->ch_ultrasonic_distance_7;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_7.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_7.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_7.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_7.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_7);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_8;
+      u_ch_ultrasonic_distance_8.real = this->ch_ultrasonic_distance_8;
+      *(outbuffer + offset + 0) = (u_ch_ultrasonic_distance_8.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_ch_ultrasonic_distance_8.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_ch_ultrasonic_distance_8.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_ch_ultrasonic_distance_8.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->ch_ultrasonic_distance_8);
       union {
         int32_t real;
         uint32_t base;
@@ -87,28 +169,94 @@ namespace ros_msd700_msgs
     virtual int deserialize(unsigned char *inbuffer) override
     {
       int offset = 0;
-      uint32_t ch_ultrasonic_distances_lengthT = ((uint32_t) (*(inbuffer + offset))); 
-      ch_ultrasonic_distances_lengthT |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1); 
-      ch_ultrasonic_distances_lengthT |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2); 
-      ch_ultrasonic_distances_lengthT |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3); 
-      offset += sizeof(this->ch_ultrasonic_distances_length);
-      if(ch_ultrasonic_distances_lengthT > ch_ultrasonic_distances_length)
-        this->ch_ultrasonic_distances = (float*)realloc(this->ch_ultrasonic_distances, ch_ultrasonic_distances_lengthT * sizeof(float));
-      ch_ultrasonic_distances_length = ch_ultrasonic_distances_lengthT;
-      for( uint32_t i = 0; i < ch_ultrasonic_distances_length; i++){
       union {
         float real;
         uint32_t base;
-      } u_st_ch_ultrasonic_distances;
-      u_st_ch_ultrasonic_distances.base = 0;
-      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
-      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
-      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
-      u_st_ch_ultrasonic_distances.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
-      this->st_ch_ultrasonic_distances = u_st_ch_ultrasonic_distances.real;
-      offset += sizeof(this->st_ch_ultrasonic_distances);
-        memcpy( &(this->ch_ultrasonic_distances[i]), &(this->st_ch_ultrasonic_distances), sizeof(float));
-      }
+      } u_ch_ultrasonic_distance_1;
+      u_ch_ultrasonic_distance_1.base = 0;
+      u_ch_ultrasonic_distance_1.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_1.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_1.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_1.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_1 = u_ch_ultrasonic_distance_1.real;
+      offset += sizeof(this->ch_ultrasonic_distance_1);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_2;
+      u_ch_ultrasonic_distance_2.base = 0;
+      u_ch_ultrasonic_distance_2.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_2.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_2.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_2.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_2 = u_ch_ultrasonic_distance_2.real;
+      offset += sizeof(this->ch_ultrasonic_distance_2);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_3;
+      u_ch_ultrasonic_distance_3.base = 0;
+      u_ch_ultrasonic_distance_3.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_3.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_3.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_3.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_3 = u_ch_ultrasonic_distance_3.real;
+      offset += sizeof(this->ch_ultrasonic_distance_3);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_4;
+      u_ch_ultrasonic_distance_4.base = 0;
+      u_ch_ultrasonic_distance_4.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_4.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_4.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_4.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_4 = u_ch_ultrasonic_distance_4.real;
+      offset += sizeof(this->ch_ultrasonic_distance_4);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_5;
+      u_ch_ultrasonic_distance_5.base = 0;
+      u_ch_ultrasonic_distance_5.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_5.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_5.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_5.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_5 = u_ch_ultrasonic_distance_5.real;
+      offset += sizeof(this->ch_ultrasonic_distance_5);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_6;
+      u_ch_ultrasonic_distance_6.base = 0;
+      u_ch_ultrasonic_distance_6.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_6.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_6.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_6.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_6 = u_ch_ultrasonic_distance_6.real;
+      offset += sizeof(this->ch_ultrasonic_distance_6);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_7;
+      u_ch_ultrasonic_distance_7.base = 0;
+      u_ch_ultrasonic_distance_7.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_7.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_7.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_7.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_7 = u_ch_ultrasonic_distance_7.real;
+      offset += sizeof(this->ch_ultrasonic_distance_7);
+      union {
+        float real;
+        uint32_t base;
+      } u_ch_ultrasonic_distance_8;
+      u_ch_ultrasonic_distance_8.base = 0;
+      u_ch_ultrasonic_distance_8.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_ch_ultrasonic_distance_8.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_ch_ultrasonic_distance_8.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_ch_ultrasonic_distance_8.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->ch_ultrasonic_distance_8 = u_ch_ultrasonic_distance_8.real;
+      offset += sizeof(this->ch_ultrasonic_distance_8);
       union {
         int32_t real;
         uint32_t base;
@@ -146,7 +294,7 @@ namespace ros_msd700_msgs
     }
 
     virtual const char * getType() override { return "ros_msd700_msgs/HardwareState"; };
-    virtual const char * getMD5() override { return "df0d4a47cfe2f65874dceab8a08ff8fc"; };
+    virtual const char * getMD5() override { return "59163398a5ab981a5777e0f0b059f048"; };
 
   };
 
