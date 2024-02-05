@@ -569,9 +569,14 @@ void write_servo(){
 
 void update_hardware_state(){
   // TODO: get ultrasonic data
-  for (int i=0 ; i<8 ; i++) {
-    hardware_state_msg.ch_ultrasonic_distances[i] = 0.0;
-  }
+  hardware_state_msg.ch_ultrasonic_distance_1 = 0.0;
+  hardware_state_msg.ch_ultrasonic_distance_2 = 0.0;
+  hardware_state_msg.ch_ultrasonic_distance_3 = 0.0;
+  hardware_state_msg.ch_ultrasonic_distance_4 = 0.0;
+  hardware_state_msg.ch_ultrasonic_distance_5 = 0.0;
+  hardware_state_msg.ch_ultrasonic_distance_6 = 0.0;
+  hardware_state_msg.ch_ultrasonic_distance_7 = 0.0;
+  hardware_state_msg.ch_ultrasonic_distance_8 = 0.0;
   hardware_state_msg.right_motor_pulse_delta = RightEncoder.getDeltaPulse();
   hardware_state_msg.left_motor_pulse_delta = LeftEncoder.getDeltaPulse();
   hardware_state_msg.heading = heading_filtered;
