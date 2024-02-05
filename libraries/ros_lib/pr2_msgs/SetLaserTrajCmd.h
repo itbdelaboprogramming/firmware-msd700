@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ros/msg.h"
-#include "pr2_msgs/LaserTrajCmd.h"
 #include "ros/time.h"
+#include "pr2_msgs/LaserTrajCmd.h"
 
 namespace pr2_msgs
 {

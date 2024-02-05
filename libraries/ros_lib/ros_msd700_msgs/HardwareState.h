@@ -20,11 +20,14 @@ namespace ros_msd700_msgs
       _right_motor_pulse_delta_type right_motor_pulse_delta;
       typedef int32_t _left_motor_pulse_delta_type;
       _left_motor_pulse_delta_type left_motor_pulse_delta;
+      typedef float _heading_type;
+      _heading_type heading;
 
     HardwareState():
       ch_ultrasonic_distances_length(0), st_ch_ultrasonic_distances(), ch_ultrasonic_distances(nullptr),
       right_motor_pulse_delta(0),
-      left_motor_pulse_delta(0)
+      left_motor_pulse_delta(0),
+      heading(0)
     {
     }
 
@@ -68,6 +71,16 @@ namespace ros_msd700_msgs
       *(outbuffer + offset + 2) = (u_left_motor_pulse_delta.base >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (u_left_motor_pulse_delta.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->left_motor_pulse_delta);
+      union {
+        float real;
+        uint32_t base;
+      } u_heading;
+      u_heading.real = this->heading;
+      *(outbuffer + offset + 0) = (u_heading.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_heading.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_heading.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_heading.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->heading);
       return offset;
     }
 
@@ -118,11 +131,22 @@ namespace ros_msd700_msgs
       u_left_motor_pulse_delta.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       this->left_motor_pulse_delta = u_left_motor_pulse_delta.real;
       offset += sizeof(this->left_motor_pulse_delta);
+      union {
+        float real;
+        uint32_t base;
+      } u_heading;
+      u_heading.base = 0;
+      u_heading.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_heading.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_heading.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_heading.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->heading = u_heading.real;
+      offset += sizeof(this->heading);
      return offset;
     }
 
     virtual const char * getType() override { return "ros_msd700_msgs/HardwareState"; };
-    virtual const char * getMD5() override { return "175a063e8d408168abc6b783eb7af198"; };
+    virtual const char * getMD5() override { return "df0d4a47cfe2f65874dceab8a08ff8fc"; };
 
   };
 

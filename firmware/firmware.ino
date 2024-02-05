@@ -42,15 +42,15 @@ In "loop()":
 
 // For Debugging, uncomment one of these
 //#define RECEIVER_RAW
-//#define MOTOR_ANGLE_PULSE
+#define MOTOR_ANGLE_PULSE
 //#define MOTOR_ANGLE_DEGREE
 //#define MOTOR_ANGLE_RADIAN
 //#define MOTOR_ANGLE_REVOLUTION
 //#define MOTOR_SPEED_PPS
 //#define MOTOR_SPEED_DPS
 //#define MOTOR_SPEED_RPS
-#define MOTOR_SPEED_RPM
-#define TARGET_RPM
+//#define MOTOR_SPEED_RPM
+//#define TARGET_RPM
 //#define PWM_RESPONSE
 //#define VEHICLE_POSITION
 //#define VEHICLE_SPEED
@@ -77,8 +77,8 @@ In "loop()":
 #define LEFT_MOTOR_PWM_PIN 8
 
 // Encoder PIN
-#define RIGHT_ENC_PIN_A 50
-#define RIGHT_ENC_PIN_B 51
+#define RIGHT_ENC_PIN_A 52
+#define RIGHT_ENC_PIN_B 53
 
 #define LEFT_ENC_PIN_A 11
 #define LEFT_ENC_PIN_B 10
@@ -456,6 +456,7 @@ void calculatePose(){
     
     // Wrap the orientation angle
     pose_theta = wrapAngleRadian(pose_theta);
+    get_heading();
 
     // Measure the wheel speed
     RightEncoder.measureOmega();
@@ -572,6 +573,7 @@ void update_hardware_state(){
   }
   hardware_state_msg.right_motor_pulse_delta = RightEncoder.getDeltaPulse();
   hardware_state_msg.left_motor_pulse_delta = LeftEncoder.getDeltaPulse();
+  hardware_state_msg.heading = heading_filtered;
   hardware_state_pub.publish(&hardware_state_msg);
 }
 
@@ -677,8 +679,8 @@ void debug(){
     #endif
 
     #ifdef MOTOR_ANGLE_PULSE
-    Serial.print(RightEncoder.getPulse()); Serial.print("\t");
-    Serial.print(LeftEncoder.getPulse()); Serial.print("\t");
+    Serial.print(RightEncoder.getDeltaPulse()); Serial.print("\t");
+    Serial.print(LeftEncoder.getDeltaPulse()); Serial.print("\t");
     #endif
 
     #ifdef MOTOR_ANGLE_DEGREE
@@ -739,7 +741,8 @@ void debug(){
     #ifdef VEHICLE_POSITION
     Serial.print(pose_x); Serial.print("\t");
     Serial.print(pose_y); Serial.print("\t");
-    Serial.print(pose_theta/PI*180.0); Serial.print("\t");
+    //Serial.print(pose_theta/PI*180.0); Serial.print("\t");
+    Serial.print(heading_filtered); Serial.print("\t");
     #endif
     
     #ifdef VEHICLE_SPEED

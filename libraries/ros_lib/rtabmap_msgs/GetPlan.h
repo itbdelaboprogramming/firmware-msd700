@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ros/msg.h"
-#include "geometry_msgs/PoseStamped.h"
 #include "rtabmap_msgs/Path.h"
+#include "geometry_msgs/PoseStamped.h"
 
 namespace rtabmap_msgs
 {
