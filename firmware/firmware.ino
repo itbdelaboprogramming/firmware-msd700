@@ -580,6 +580,14 @@ void update_hardware_state(){
   hardware_state_msg.right_motor_pulse_delta = RightEncoder.getDeltaPulse();
   hardware_state_msg.left_motor_pulse_delta = LeftEncoder.getDeltaPulse();
   hardware_state_msg.heading = heading_filtered;
+  hardware_state_msg.roll = 0.0;
+  hardware_state_msg.pitch = 0.0;
+  hardware_state_msg.acc_x = 0.0;
+  hardware_state_msg.acc_y = 0.0;
+  hardware_state_msg.acc_z = 0.0;
+  hardware_state_msg.gyr_x = 0.0;
+  hardware_state_msg.gyr_y = 0.0;
+  hardware_state_msg.gyr_z = 0.0;
   hardware_state_pub.publish(&hardware_state_msg);
 }
 
