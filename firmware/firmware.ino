@@ -34,10 +34,12 @@ In "loop()":
 #include <ros_msd700_msgs/HardwareCommand.h>
 #include <ros_msd700_msgs/HardwareState.h>
 #include <Servo.h>
+#include <MPU6050.h>
 
 #include "Motor.h"
 #include "Encoder.h"
 #include "LPF.h"
+#include "HPF.h"
 #include "pidIr.h"
 
 // For Debugging, uncomment one of these
@@ -112,6 +114,29 @@ In "loop()":
 #define ARMED 0x00                      // armed condition
 #define DISARMED 0x01                   // disarmed condition
 #define HMC5983_ADDRESS 0x1E            // magnetometer I2C address
+#define CMPS12_ADDRESS 0x60             // CMPS12 I2C address
+
+//---------------- CMPS12 Register Address ------------------//
+
+#define CONTROL_Register 0x00
+
+#define BEARING_Register 0x02
+#define PITCH_Register 0x1C
+#define ROLL_Register 0x05
+
+#define MAGNET_X_Register  0x06
+#define MAGNET_Y_Register  0x08
+#define MAGNET_Z_Register  0x0A
+
+#define ACCELERO_X_Register 0x0C
+#define ACCELERO_Y_Register 0x0E
+#define ACCELERO_Z_Register 0x10
+
+#define GYRO_X_Register 0x12
+#define GYRO_Y_Register 0x14
+#define GYRO_Z_Register 0x16
+
+//-----------------------------------------------------------//
 
 #define KP_RIGHT_MOTOR 5.0
 #define KI_RIGHT_MOTOR 0.03
@@ -134,9 +159,12 @@ LPF RightRPM_lpf(ENC_LPF_CUT_OFF_FREQ);
 LPF LeftRPM_lpf(ENC_LPF_CUT_OFF_FREQ);
 
 LPF dlpf(1);
+HPF dhpf(1);
 
 pidIr RightMotorPID(KP_RIGHT_MOTOR, KI_RIGHT_MOTOR, KD_RIGHT_MOTOR);
 pidIr LeftMotorPID(KP_LEFT_MOTOR, KI_LEFT_MOTOR, KD_LEFT_MOTOR);
+
+MPU6050 mpu;
 
 // Magnetometer variables
 struct magnetometer {
@@ -151,6 +179,24 @@ struct magnetometer {
   float hz;
   float hy;
 }; magnetometer magnetometer;
+
+// CMPS variables
+struct cmps {
+  byte msb;
+  byte lsb;
+
+  float cmps_yaw;
+  float cmps_pitch;
+  float cmps_roll;
+
+  float acc_x;
+  float acc_y;
+  float acc_z;
+
+  float gyr_x;
+  float gyr_y;
+  float gyr_z;
+}; cmps cmps12;
 
 // Encoder's callback functions
 void callbackRA(){RightEncoder.doEncoderA();}
@@ -169,9 +215,13 @@ float left_rpm_filtered = 0;
 float right_rpm_target = 0;
 float left_rpm_target = 0;
 
-// Heading from magnetometer
+// Orientation
+float pitch = 0;
+float roll = 0;
 float heading = 0;
 float heading_filtered = 0;
+
+Vector Gyro;
 
 // Action control
 int move_value;
@@ -255,6 +305,16 @@ void setup(){
     pinMode(UART2_RX, INPUT);
     pinMode(UART2_TX, INPUT);
 
+    while(!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_8G))
+    {
+      Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
+      delay(500);
+    }
+    mpu.setDLPFMode(MPU6050_DLPF_6);
+    mpu.setDHPFMode(MPU6050_DHPF_5HZ);
+    mpu.calibrateGyro();
+    mpu.setThreshold(3);
+    
     delay(2000);
 }
 
@@ -429,7 +489,6 @@ void update_cmd(){
   }
 }
 
-
 void vehicle_stop(){
     RightMotor.stop();
     LeftMotor.stop();
@@ -458,6 +517,7 @@ void calculatePose(){
     // Wrap the orientation angle
     pose_theta = wrapAngleRadian(pose_theta);
     get_heading();
+    get_cmps12();
 
     // Measure the wheel speed
     RightEncoder.measureOmega();
@@ -534,6 +594,55 @@ void get_heading(){
     heading_filtered = dlpf.filter(heading, dt);
 }
 
+int16_t read_cmps12(int reg, int bytes){
+  Wire.beginTransmission(CMPS12_ADDRESS);
+  Wire.write(reg);
+  int nackCatcher = Wire.endTransmission();
+
+  // Return if we have a connection problem 
+  if(nackCatcher != 0){return 0;}
+
+  int nReceived = Wire.requestFrom(CMPS12_ADDRESS, bytes);
+  while(Wire.available()){
+    if(nReceived == bytes){
+      if (bytes == 2){
+        cmps12.msb = Wire.read();
+        cmps12.lsb = Wire.read();
+        return ((cmps12.msb << 8) + cmps12.lsb);
+      } else if (bytes == 1){
+        cmps12.lsb = Wire.read();
+        signed char value = cmps12.lsb;
+        return value;
+      } else{
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+}
+
+void get_cmps12(){
+  //Read 3D orientation from cmps12
+  cmps12.cmps_yaw = read_cmps12(BEARING_Register, 2)/10.0;
+  cmps12.cmps_pitch = read_cmps12(PITCH_Register, 2); //+/-180 deg
+  cmps12.cmps_roll = read_cmps12(ROLL_Register, 1); //only +/-90 deg
+
+  //Read accelerometer
+  cmps12.acc_x = dhpf.filter(read_cmps12(ACCELERO_X_Register, 2) * 1.0f/100.f - (-1.00),dt);
+  cmps12.acc_y = dhpf.filter(read_cmps12(ACCELERO_Y_Register, 2) * 1.0f/100.f - (-0.08),dt);
+  cmps12.acc_z = dhpf.filter(read_cmps12(ACCELERO_Z_Register, 2) * 1.0f/100.f - (9.52),dt);
+
+  //Read gyroscope
+  cmps12.gyr_x = read_cmps12(GYRO_X_Register, 2) * 1.0f/16.f - 0;
+  cmps12.gyr_y = read_cmps12(GYRO_Y_Register, 2) * 1.0f/16.f - (-0.04);
+  cmps12.gyr_z = read_cmps12(GYRO_Z_Register, 2) * 1.0f/16.f - (-0.06);
+
+  Gyro = mpu.readNormalizeGyro();
+  pitch = pitch + Gyro.YAxis * dt/1000.0;
+  roll = roll + Gyro.XAxis * dt/1000.0;
+}
+
 void write_servo(){
   // RC mode
   if (receiver_ch_value[3] < 1600) {
@@ -579,15 +688,15 @@ void update_hardware_state(){
   hardware_state_msg.ch_ultrasonic_distance_8 = 0.0;
   hardware_state_msg.right_motor_pulse_delta = RightEncoder.getDeltaPulse();
   hardware_state_msg.left_motor_pulse_delta = LeftEncoder.getDeltaPulse();
-  hardware_state_msg.heading = heading_filtered;
-  hardware_state_msg.roll = 0.0;
-  hardware_state_msg.pitch = 0.0;
-  hardware_state_msg.acc_x = 0.0;
-  hardware_state_msg.acc_y = 0.0;
-  hardware_state_msg.acc_z = 0.0;
-  hardware_state_msg.gyr_x = 0.0;
-  hardware_state_msg.gyr_y = 0.0;
-  hardware_state_msg.gyr_z = 0.0;
+  hardware_state_msg.heading = cmps12.cmps_yaw;
+  hardware_state_msg.roll = roll;
+  hardware_state_msg.pitch = pitch;
+  hardware_state_msg.acc_x = cmps12.acc_x;
+  hardware_state_msg.acc_y = cmps12.acc_y;
+  hardware_state_msg.acc_z = cmps12.acc_z;
+  hardware_state_msg.gyr_x = Gyro.XAxis;
+  hardware_state_msg.gyr_y = Gyro.YAxis;
+  hardware_state_msg.gyr_z = Gyro.ZAxis;
   hardware_state_pub.publish(&hardware_state_msg);
 }
 
