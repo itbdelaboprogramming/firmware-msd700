@@ -196,6 +196,10 @@ struct cmps {
   float gyr_x;
   float gyr_y;
   float gyr_z;
+
+  float mag_x;
+  float mag_y;
+  float mag_z;
 }; cmps cmps12;
 
 // Encoder's callback functions
@@ -629,14 +633,18 @@ void get_cmps12(){
   cmps12.cmps_roll = read_cmps12(ROLL_Register, 1); //only +/-90 deg
 
   //Read accelerometer
-  cmps12.acc_x = dhpf.filter(read_cmps12(ACCELERO_X_Register, 2) * 1.0f/100.f - (-1.00),dt);
-  cmps12.acc_y = dhpf.filter(read_cmps12(ACCELERO_Y_Register, 2) * 1.0f/100.f - (-0.08),dt);
-  cmps12.acc_z = dhpf.filter(read_cmps12(ACCELERO_Z_Register, 2) * 1.0f/100.f - (9.52),dt);
+  cmps12.acc_x = read_cmps12(ACCELERO_X_Register, 2) * 1.0f/100.f;// - (-1.00);
+  cmps12.acc_y = read_cmps12(ACCELERO_Y_Register, 2) * 1.0f/100.f;// - (-0.08);
+  cmps12.acc_z = read_cmps12(ACCELERO_Z_Register, 2) * 1.0f/100.f;// - (9.52);
 
   //Read gyroscope
   cmps12.gyr_x = read_cmps12(GYRO_X_Register, 2) * 1.0f/16.f - 0;
   cmps12.gyr_y = read_cmps12(GYRO_Y_Register, 2) * 1.0f/16.f - (-0.04);
   cmps12.gyr_z = read_cmps12(GYRO_Z_Register, 2) * 1.0f/16.f - (-0.06);
+
+  cmps12.mag_x = read_cmps12(MAGNET_X_Register, 2) * 0.3f;
+  cmps12.mag_y = read_cmps12(MAGNET_Y_Register, 2) * 0.3f;
+  cmps12.mag_z = read_cmps12(MAGNET_Z_Register, 2) * 0.3f;
 
   Gyro = mpu.readNormalizeGyro();
   pitch = pitch + Gyro.YAxis * dt/1000.0;
@@ -689,14 +697,17 @@ void update_hardware_state(){
   hardware_state_msg.right_motor_pulse_delta = RightEncoder.getDeltaPulse();
   hardware_state_msg.left_motor_pulse_delta = LeftEncoder.getDeltaPulse();
   hardware_state_msg.heading = cmps12.cmps_yaw;
-  hardware_state_msg.roll = roll;
-  hardware_state_msg.pitch = pitch;
+  hardware_state_msg.roll = cmps12.cmps_roll;
+  hardware_state_msg.pitch = cmps12.cmps_pitch;
   hardware_state_msg.acc_x = cmps12.acc_x;
   hardware_state_msg.acc_y = cmps12.acc_y;
   hardware_state_msg.acc_z = cmps12.acc_z;
   hardware_state_msg.gyr_x = Gyro.XAxis;
   hardware_state_msg.gyr_y = Gyro.YAxis;
   hardware_state_msg.gyr_z = Gyro.ZAxis;
+  hardware_state_msg.mag_x = cmps12.mag_x;
+  hardware_state_msg.mag_y = cmps12.mag_y;
+  hardware_state_msg.mag_z = cmps12.mag_z;
   hardware_state_pub.publish(&hardware_state_msg);
 }
 
