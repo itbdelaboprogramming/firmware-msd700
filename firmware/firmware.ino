@@ -80,7 +80,7 @@ In "loop()":
 
 // Encoder PIN
 #define RIGHT_ENC_PIN_A 52
-#define RIGHT_ENC_PIN_B 53
+#define RIGHT_ENC_PIN_B 12
 
 #define LEFT_ENC_PIN_A 11
 #define LEFT_ENC_PIN_B 10
@@ -90,7 +90,7 @@ In "loop()":
 #define BLUE_LED 31
 
 // SERVO
-#define CAM_SERVO 2
+#define CAM_SERVO 3
 #define MAX_SERVO_POS 175
 #define MIN_SERVO_POS 125
 #define INCREMENT_POS 10

@@ -34,6 +34,28 @@ namespace ros_msd700_msgs
       _left_motor_pulse_delta_type left_motor_pulse_delta;
       typedef float _heading_type;
       _heading_type heading;
+      typedef float _pitch_type;
+      _pitch_type pitch;
+      typedef float _roll_type;
+      _roll_type roll;
+      typedef float _acc_x_type;
+      _acc_x_type acc_x;
+      typedef float _acc_y_type;
+      _acc_y_type acc_y;
+      typedef float _acc_z_type;
+      _acc_z_type acc_z;
+      typedef float _gyr_x_type;
+      _gyr_x_type gyr_x;
+      typedef float _gyr_y_type;
+      _gyr_y_type gyr_y;
+      typedef float _gyr_z_type;
+      _gyr_z_type gyr_z;
+      typedef float _mag_x_type;
+      _mag_x_type mag_x;
+      typedef float _mag_y_type;
+      _mag_y_type mag_y;
+      typedef float _mag_z_type;
+      _mag_z_type mag_z;
 
     HardwareState():
       ch_ultrasonic_distance_1(0),
@@ -46,7 +68,18 @@ namespace ros_msd700_msgs
       ch_ultrasonic_distance_8(0),
       right_motor_pulse_delta(0),
       left_motor_pulse_delta(0),
-      heading(0)
+      heading(0),
+      pitch(0),
+      roll(0),
+      acc_x(0),
+      acc_y(0),
+      acc_z(0),
+      gyr_x(0),
+      gyr_y(0),
+      gyr_z(0),
+      mag_x(0),
+      mag_y(0),
+      mag_z(0)
     {
     }
 
@@ -163,6 +196,116 @@ namespace ros_msd700_msgs
       *(outbuffer + offset + 2) = (u_heading.base >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (u_heading.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->heading);
+      union {
+        float real;
+        uint32_t base;
+      } u_pitch;
+      u_pitch.real = this->pitch;
+      *(outbuffer + offset + 0) = (u_pitch.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_pitch.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_pitch.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_pitch.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->pitch);
+      union {
+        float real;
+        uint32_t base;
+      } u_roll;
+      u_roll.real = this->roll;
+      *(outbuffer + offset + 0) = (u_roll.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_roll.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_roll.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_roll.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->roll);
+      union {
+        float real;
+        uint32_t base;
+      } u_acc_x;
+      u_acc_x.real = this->acc_x;
+      *(outbuffer + offset + 0) = (u_acc_x.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_acc_x.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_acc_x.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_acc_x.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->acc_x);
+      union {
+        float real;
+        uint32_t base;
+      } u_acc_y;
+      u_acc_y.real = this->acc_y;
+      *(outbuffer + offset + 0) = (u_acc_y.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_acc_y.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_acc_y.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_acc_y.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->acc_y);
+      union {
+        float real;
+        uint32_t base;
+      } u_acc_z;
+      u_acc_z.real = this->acc_z;
+      *(outbuffer + offset + 0) = (u_acc_z.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_acc_z.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_acc_z.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_acc_z.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->acc_z);
+      union {
+        float real;
+        uint32_t base;
+      } u_gyr_x;
+      u_gyr_x.real = this->gyr_x;
+      *(outbuffer + offset + 0) = (u_gyr_x.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_gyr_x.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_gyr_x.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_gyr_x.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->gyr_x);
+      union {
+        float real;
+        uint32_t base;
+      } u_gyr_y;
+      u_gyr_y.real = this->gyr_y;
+      *(outbuffer + offset + 0) = (u_gyr_y.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_gyr_y.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_gyr_y.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_gyr_y.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->gyr_y);
+      union {
+        float real;
+        uint32_t base;
+      } u_gyr_z;
+      u_gyr_z.real = this->gyr_z;
+      *(outbuffer + offset + 0) = (u_gyr_z.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_gyr_z.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_gyr_z.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_gyr_z.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->gyr_z);
+      union {
+        float real;
+        uint32_t base;
+      } u_mag_x;
+      u_mag_x.real = this->mag_x;
+      *(outbuffer + offset + 0) = (u_mag_x.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_mag_x.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_mag_x.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_mag_x.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->mag_x);
+      union {
+        float real;
+        uint32_t base;
+      } u_mag_y;
+      u_mag_y.real = this->mag_y;
+      *(outbuffer + offset + 0) = (u_mag_y.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_mag_y.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_mag_y.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_mag_y.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->mag_y);
+      union {
+        float real;
+        uint32_t base;
+      } u_mag_z;
+      u_mag_z.real = this->mag_z;
+      *(outbuffer + offset + 0) = (u_mag_z.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_mag_z.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_mag_z.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_mag_z.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->mag_z);
       return offset;
     }
 
@@ -290,11 +433,132 @@ namespace ros_msd700_msgs
       u_heading.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       this->heading = u_heading.real;
       offset += sizeof(this->heading);
+      union {
+        float real;
+        uint32_t base;
+      } u_pitch;
+      u_pitch.base = 0;
+      u_pitch.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_pitch.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_pitch.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_pitch.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->pitch = u_pitch.real;
+      offset += sizeof(this->pitch);
+      union {
+        float real;
+        uint32_t base;
+      } u_roll;
+      u_roll.base = 0;
+      u_roll.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_roll.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_roll.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_roll.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->roll = u_roll.real;
+      offset += sizeof(this->roll);
+      union {
+        float real;
+        uint32_t base;
+      } u_acc_x;
+      u_acc_x.base = 0;
+      u_acc_x.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_acc_x.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_acc_x.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_acc_x.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->acc_x = u_acc_x.real;
+      offset += sizeof(this->acc_x);
+      union {
+        float real;
+        uint32_t base;
+      } u_acc_y;
+      u_acc_y.base = 0;
+      u_acc_y.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_acc_y.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_acc_y.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_acc_y.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->acc_y = u_acc_y.real;
+      offset += sizeof(this->acc_y);
+      union {
+        float real;
+        uint32_t base;
+      } u_acc_z;
+      u_acc_z.base = 0;
+      u_acc_z.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_acc_z.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_acc_z.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_acc_z.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->acc_z = u_acc_z.real;
+      offset += sizeof(this->acc_z);
+      union {
+        float real;
+        uint32_t base;
+      } u_gyr_x;
+      u_gyr_x.base = 0;
+      u_gyr_x.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_gyr_x.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_gyr_x.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_gyr_x.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->gyr_x = u_gyr_x.real;
+      offset += sizeof(this->gyr_x);
+      union {
+        float real;
+        uint32_t base;
+      } u_gyr_y;
+      u_gyr_y.base = 0;
+      u_gyr_y.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_gyr_y.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_gyr_y.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_gyr_y.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->gyr_y = u_gyr_y.real;
+      offset += sizeof(this->gyr_y);
+      union {
+        float real;
+        uint32_t base;
+      } u_gyr_z;
+      u_gyr_z.base = 0;
+      u_gyr_z.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_gyr_z.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_gyr_z.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_gyr_z.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->gyr_z = u_gyr_z.real;
+      offset += sizeof(this->gyr_z);
+      union {
+        float real;
+        uint32_t base;
+      } u_mag_x;
+      u_mag_x.base = 0;
+      u_mag_x.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_mag_x.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_mag_x.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_mag_x.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->mag_x = u_mag_x.real;
+      offset += sizeof(this->mag_x);
+      union {
+        float real;
+        uint32_t base;
+      } u_mag_y;
+      u_mag_y.base = 0;
+      u_mag_y.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_mag_y.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_mag_y.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_mag_y.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->mag_y = u_mag_y.real;
+      offset += sizeof(this->mag_y);
+      union {
+        float real;
+        uint32_t base;
+      } u_mag_z;
+      u_mag_z.base = 0;
+      u_mag_z.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_mag_z.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_mag_z.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_mag_z.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->mag_z = u_mag_z.real;
+      offset += sizeof(this->mag_z);
      return offset;
     }
 
     virtual const char * getType() override { return "ros_msd700_msgs/HardwareState"; };
-    virtual const char * getMD5() override { return "59163398a5ab981a5777e0f0b059f048"; };
+    virtual const char * getMD5() override { return "83d55bb473af3c26f97964977e72f906"; };
 
   };
 
