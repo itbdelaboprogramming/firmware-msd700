@@ -37,6 +37,7 @@ In "loop()":
 #include <Servo.h>
 #include <MPU6050.h>
 
+// Include the necessary library
 #include "Motor.h"
 #include "Encoder.h"
 #include "LPF.h"
@@ -45,7 +46,7 @@ In "loop()":
 
 // For Debugging, uncomment one of these
 //#define RECEIVER_RAW
-//#define MOTOR_ANGLE_PULSE
+#define MOTOR_ANGLE_PULSE
 //#define MOTOR_ANGLE_DEGREE
 //#define MOTOR_ANGLE_RADIAN
 //#define MOTOR_ANGLE_REVOLUTION
@@ -91,7 +92,7 @@ In "loop()":
 #define BLUE_LED 31
 
 // SERVO
-#define CAM_SERVO 2
+#define CAM_SERVO 3
 #define MAX_SERVO_POS 175
 #define MIN_SERVO_POS 125
 #define INCREMENT_POS 10
@@ -268,8 +269,6 @@ float left_motor_speed_ = 0;
 float ult_direction  = 0.0;
 float ult_distance = 0.0;
 
-
-// ====================================================================================================================
 // Create publisher
 ros_msd700_msgs::HardwareState hardware_state_msg;
 ros::Publisher hardware_state_pub("hardware_state", &hardware_state_msg);
@@ -285,19 +284,16 @@ ros::Subscriber<ros_msd700_msgs::HardwareCommand> hardware_command_sub("hardware
 
 void setup(){
     Serial.begin(57600);
-
-    // Begin I2C connection
     Wire.begin();
 
-    // Initiate ROS node
+    //Initiate ROS node
     nh.initNode();
     nh.advertise(hardware_state_pub);
     nh.subscribe(hardware_command_sub);
 
-    // Initialize pinout
     RightMotor.begin();
     LeftMotor.begin();
-    
+
 //    setupPinReceiver();/
 
     RightEncoder.start(callbackRA, callbackRB);
@@ -317,17 +313,18 @@ void setup(){
     pinMode(UART2_RX, INPUT);
     pinMode(UART2_TX, INPUT);
 
-  //  while(!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_8G))
-  //  {
-  //    Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
-  //    delay(500);
-  //  }
-  //  mpu.setDLPFMode(MPU6050_DLPF_6);
-  //  mpu.setDHPFMode(MPU6050_DHPF_5HZ);
-  //  mpu.calibrateGyro();
-  //  mpu.setThreshold(3);
-    
+    while(!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_8G))
+    {
+      Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
+      delay(500);
+    }
+    mpu.setDLPFMode(MPU6050_DLPF_6);
+    mpu.setDHPFMode(MPU6050_DHPF_5HZ);
+    mpu.calibrateGyro();
+    mpu.setThreshold(3);
+
     init_rc();
+    
     delay(2000);
 }
 
@@ -335,7 +332,6 @@ void loop(){
     time_now = millis();
     if(time_now - time_last >= LOOP_TIME){
         dt = time_now - time_last;
-        time_last = time_now;
         getReceiverSignal();
         
 //        receiver_ch_filtered[1] = Ch_1_lpf.filter(receiver_ch_value[1], dt);
@@ -346,15 +342,11 @@ void loop(){
 
         update_failsafe();
         update_cmd();
-        
         update_hardware_state();
-        nh.spinOnce();
+        
+        time_last = time_now;
         debug();
-
-
-        // Reset Variable
-        right_pwm = 0;
-        left_pwm = 0;
+        nh.spinOnce();
     }
 }
 
@@ -441,6 +433,7 @@ void getReceiverSignal() {
 //        current_channel = 1; // Reset to the first channel if all channels are processed
 //    }
 }
+
 
 int getChannelPin(byte channel) {
     switch (channel) {
@@ -534,7 +527,6 @@ void update_cmd(){
       
       digitalWrite(RED_LED, LOW);
       digitalWrite(BLUE_LED, HIGH);
-      
     } else {  //PC commands operation
       //Part to control motor target based on the PC commands
       right_rpm_target = right_motor_speed_;
@@ -716,14 +708,13 @@ void get_cmps12(){
   cmps12.gyr_y = read_cmps12(GYRO_Y_Register, 2) * 1.0f/16.f - (-0.04);
   cmps12.gyr_z = read_cmps12(GYRO_Z_Register, 2) * 1.0f/16.f - (-0.06);
 
-  //Read magnetometer
   cmps12.mag_x = read_cmps12(MAGNET_X_Register, 2) * 0.3f;
   cmps12.mag_y = read_cmps12(MAGNET_Y_Register, 2) * 0.3f;
   cmps12.mag_z = read_cmps12(MAGNET_Z_Register, 2) * 0.3f;
 
-//  Gyro = mpu.readNormalizeGyro();
-//  pitch = pitch + Gyro.YAxis * dt/1000.0;
-//  roll = roll + Gyro.XAxis * dt/1000.0;
+  Gyro = mpu.readNormalizeGyro();
+  pitch = pitch + Gyro.YAxis * dt/1000.0;
+  roll = roll + Gyro.XAxis * dt/1000.0;
 }
 
 void write_servo(){
@@ -777,12 +768,9 @@ void update_hardware_state(){
   hardware_state_msg.acc_x = cmps12.acc_x;
   hardware_state_msg.acc_y = cmps12.acc_y;
   hardware_state_msg.acc_z = cmps12.acc_z;
-  // hardware_state_msg.gyr_x = Gyro.XAxis;
-  // hardware_state_msg.gyr_y = Gyro.YAxis;
-  // hardware_state_msg.gyr_z = Gyro.ZAxis;
-  hardware_state_msg.gyr_x = cmps12.gyr_x;
-  hardware_state_msg.gyr_y = cmps12.gyr_y;
-  hardware_state_msg.gyr_z = cmps12.gyr_z;
+  hardware_state_msg.gyr_x = Gyro.XAxis;
+  hardware_state_msg.gyr_y = Gyro.YAxis;
+  hardware_state_msg.gyr_z = Gyro.ZAxis;
   hardware_state_msg.mag_x = cmps12.mag_x;
   hardware_state_msg.mag_y = cmps12.mag_y;
   hardware_state_msg.mag_z = cmps12.mag_z;
@@ -884,8 +872,8 @@ void debugHeader(){
 
 void debug(){
     #ifdef RECEIVER_RAW
-    Serial.print(receiver_ch_filtered[1]); Serial.print("\t");
-    Serial.print(receiver_ch_filtered[2]); Serial.print("\t");
+    Serial.print(receiver_ch_value[1]); Serial.print("\t");
+    Serial.print(receiver_ch_value[2]); Serial.print("\t");
     Serial.print(receiver_ch_value[3]); Serial.print("\t");
     Serial.print(receiver_ch_value[4]); Serial.print("\t");
     #endif
