@@ -46,18 +46,19 @@ In "loop()":
 #include "LPF.h"
 #include "HPF.h"
 #include "pidIr.h"
+#include "MovingAverage.h"
 
 // For Debugging, uncomment one of these
 //#define RECEIVER_RAW
-#define MOTOR_ANGLE_PULSE
+// #define MOTOR_ANGLE_PULSE
 //#define MOTOR_ANGLE_DEGREE
 //#define MOTOR_ANGLE_RADIAN
 //#define MOTOR_ANGLE_REVOLUTION
 //#define MOTOR_SPEED_PPS
 //#define MOTOR_SPEED_DPS
 //#define MOTOR_SPEED_RPS
-//#define MOTOR_SPEED_RPM
-//#define TARGET_RPM
+#define MOTOR_SPEED_RPM
+#define TARGET_RPM
 //#define PWM_RESPONSE
 //#define VEHICLE_POSITION
 //#define VEHICLE_SPEED
@@ -75,12 +76,12 @@ In "loop()":
 #define PIN_CH_8 A15
 
 // Motor PIN
-#define RIGHT_MOTOR_REN_PIN 4
-#define RIGHT_MOTOR_LEN_PIN 5
+#define RIGHT_MOTOR_REN_PIN 5
+#define RIGHT_MOTOR_LEN_PIN 4
 #define RIGHT_MOTOR_PWM_PIN 9
 
-#define LEFT_MOTOR_REN_PIN 6
-#define LEFT_MOTOR_LEN_PIN 7
+#define LEFT_MOTOR_REN_PIN 7
+#define LEFT_MOTOR_LEN_PIN 6
 #define LEFT_MOTOR_PWM_PIN 8
 
 // Encoder PIN
@@ -162,6 +163,10 @@ LPF Ch_2_lpf(RECEIVER_LPF_CUT_OFF_FREQ);
 
 LPF RightRPM_lpf(ENC_LPF_CUT_OFF_FREQ);
 LPF LeftRPM_lpf(ENC_LPF_CUT_OFF_FREQ);
+LPF RightRPMTarget_lpf(ENC_LPF_CUT_OFF_FREQ);
+LPF LeftRPMTarget_lpf(ENC_LPF_CUT_OFF_FREQ);
+MovingAverage RightRPMTarget_ma(15);
+MovingAverage LeftRPMTarget_ma(15);
 
 LPF dlpf(1);
 HPF dhpf(1);
@@ -512,6 +517,15 @@ void update_cmd(){
       //Compute the RPM target for each motor
       right_rpm_target = move_value - turn_value;
       left_rpm_target = move_value + turn_value;
+
+      // Compute Target Filtered
+      // Using LPF
+      // right_rpm_target = RightRPMTarget_lpf.filter(right_rpm_target, dt);
+      // left_rpm_target = LeftRPMTarget_lpf.filter(left_rpm_target, dt);
+
+      // Using MA
+      right_rpm_target = RightRPMTarget_ma.addValue(right_rpm_target);
+      left_rpm_target = LeftRPMTarget_ma.addValue(left_rpm_target);
 
       //Compute the action control (PWM) value for the motor based on PID and set it to be zero if the command is truely zero
       if(right_rpm_target == 0 && left_rpm_target == 0){
