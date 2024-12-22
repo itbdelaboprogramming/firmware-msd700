@@ -35,8 +35,8 @@ In "loop()":
 #include <Wire.h>
 #include <PinChangeInterrupt.h>
 #include <ros.h>
-#include <msd700_msg/HardwareCommand.h>
-#include <msd700_msg/HardwareState.h>
+#include <msd700_msgs/HardwareCommand.h>
+#include <msd700_msgs/HardwareState.h>
 #include <Servo.h>
 #include <MPU6050.h>
 
@@ -111,8 +111,8 @@ In "loop()":
 #define RECEIVER_LPF_CUT_OFF_FREQ 0.25  // in Hertz (Hz)
 #define ENC_LPF_CUT_OFF_FREQ 3          // in Hertz (Hz)
 #define PWM_THRESHOLD 150               // in microseconds of receiver signal
-#define MAX_RPM_MOVE 180                // in RPM for longitudinal movement
-#define MAX_RPM_TURN 70                 // in RPM for rotational movement
+#define MAX_RPM_MOVE 88                 // in RPM for longitudinal movement
+#define MAX_RPM_TURN 88                 // in RPM for rotational movement
 #define WHEEL_RADIUS 2.75               // in cm
 #define WHEEL_DISTANCE 23.0             // in cm
 #define DISTANCE 200                    // in cm
@@ -278,17 +278,17 @@ float ult_direction  = 0.0;
 float ult_distance = 0.0;
 
 // Create publisher
-msd700_msg::HardwareState hardware_state_msg;
+msd700_msgs::HardwareState hardware_state_msg;
 ros::Publisher hardware_state_pub("hardware_state", &hardware_state_msg);
 
 // Create subscriber
-void hardware_command_callback(const msd700_msg::HardwareCommand& msg){
+void hardware_command_callback(const msd700_msgs::HardwareCommand& msg){
   movement_command_ = msg.movement_command;
   cam_angle_command_ = msg.cam_angle_command;
   right_motor_speed_ = msg.right_motor_speed;
   left_motor_speed_ = msg.left_motor_speed;
 }
-ros::Subscriber<msd700_msg::HardwareCommand> hardware_command_sub("hardware_command", hardware_command_callback);
+ros::Subscriber<msd700_msgs::HardwareCommand> hardware_command_sub("hardware_command", hardware_command_callback);
 
 void setup(){
     Serial.begin(57600);
@@ -497,7 +497,7 @@ void update_cmd(){
       } else if(receiver_ch_filtered[1] <= 1500 - PWM_THRESHOLD){ //Move backward
           //Re-scale the RC signal value from [1500-PWM_THRESHOLD, 1000] to [0,-MAX_RPM_TURN+90]
           //+90 is added to compensate the unsymetrical value due to the encoder interrupts
-          move_value = map(receiver_ch_filtered[1], 1500 - PWM_THRESHOLD, 1000, 0, -MAX_RPM_MOVE+90);
+          move_value = map(receiver_ch_filtered[1], 1500 - PWM_THRESHOLD, 1000, 0, -MAX_RPM_MOVE);
       } else {  //Stop
           move_value = 0;
       }
@@ -506,7 +506,7 @@ void update_cmd(){
       if(receiver_ch_filtered[2] >= 1450 + PWM_THRESHOLD){  //Turn right
           //Re-scale the RC signal value from [1450+PWM_THRESHOLD, 1950] to [0,MAX_RPM_TURN+80]
           //+80 is added to compensate the unsymetrical value due to the encoder interrupts
-          turn_value = map(receiver_ch_filtered[2], 1450 + PWM_THRESHOLD, 1950, 0, MAX_RPM_TURN+80);
+          turn_value = map(receiver_ch_filtered[2], 1450 + PWM_THRESHOLD, 1950, 0, MAX_RPM_TURN+14);
       } else if(receiver_ch_filtered[2] <= 1450 - PWM_THRESHOLD){ //Turn left
           //Re-scale the RC signal value from [1450-PWM_THRESHOLD, 1000] to [0,-MAX_RPM_TURN]
           turn_value = map(receiver_ch_filtered[2], 1450 - PWM_THRESHOLD, 1000, 0, -MAX_RPM_TURN);
