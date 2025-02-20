@@ -1,3 +1,5 @@
+// *Last updated: 15 February 2025 (UWB added, Motor's polarity reversed)
+
 // #include <ArduinoTcpHardware.h>
 #include <ArduinoHardware.h>
 
@@ -47,6 +49,7 @@ In "loop()":
 #include "HPF.h"
 #include "pidIr.h"
 #include "MovingAverage.h"
+#include "MSD700_UWB.h"
 
 // For Debugging, uncomment one of these
 //#define RECEIVER_RAW
@@ -63,6 +66,7 @@ In "loop()":
 //#define VEHICLE_POSITION
 //#define VEHICLE_SPEED
 //#define EKF_DATA
+//#define UWB_DATA
 
 // Receiver PIN
 #define NUM_CH 5
@@ -76,20 +80,20 @@ In "loop()":
 #define PIN_CH_8 A15
 
 // Motor PIN
-#define RIGHT_MOTOR_REN_PIN 5
-#define RIGHT_MOTOR_LEN_PIN 4
+#define RIGHT_MOTOR_REN_PIN 4 // 
+#define RIGHT_MOTOR_LEN_PIN 5 //
 #define RIGHT_MOTOR_PWM_PIN 9
 
-#define LEFT_MOTOR_REN_PIN 7
-#define LEFT_MOTOR_LEN_PIN 6
+#define LEFT_MOTOR_REN_PIN 6 //
+#define LEFT_MOTOR_LEN_PIN 7 //
 #define LEFT_MOTOR_PWM_PIN 8
 
 // Encoder PIN
-#define RIGHT_ENC_PIN_A 52
-#define RIGHT_ENC_PIN_B 12
+#define RIGHT_ENC_PIN_A 12 //
+#define RIGHT_ENC_PIN_B 52 //
 
-#define LEFT_ENC_PIN_A 11
-#define LEFT_ENC_PIN_B 10
+#define LEFT_ENC_PIN_A 10 //
+#define LEFT_ENC_PIN_B 11 //
 
 // LED PIN
 #define RED_LED  30
@@ -120,7 +124,7 @@ In "loop()":
 #define ARMED 0x00                      // armed condition
 #define DISARMED 0x01                   // disarmed condition
 #define HMC5983_ADDRESS 0x1E            // magnetometer I2C address
-#define CMPS12_ADDRESS 0x60             // CMPS12 I2C address
+#define CMPS12_ADDRESS 0x60             // CMPS12 I2C addres
 
 //---------------- CMPS12 Register Address ------------------//
 
@@ -176,6 +180,8 @@ pidIr LeftMotorPID(KP_LEFT_MOTOR, KI_LEFT_MOTOR, KD_LEFT_MOTOR);
 
 MPU6050 mpu;
 
+MSD700_UWB uwb(&Serial2);
+
 // Magnetometer variables
 struct magnetometer {
   int x_msb;
@@ -211,6 +217,14 @@ struct cmps {
   float mag_y;
   float mag_z;
 }; cmps cmps12;
+
+// UWB Data
+struct uwb_struct {
+  float dist;
+  float deviation;
+  float rho;
+  float theta;
+}; uwb_struct uwb_data;
 
 // Encoder's callback functions
 void callbackRA(){RightEncoder.doEncoderA();}
@@ -321,8 +335,8 @@ void setup(){
 
     debugHeader();
 
-    pinMode(UART2_RX, INPUT);
-    pinMode(UART2_TX, INPUT);
+    // pinMode(UART2_RX, INPUT);
+    // pinMode(UART2_TX, INPUT);
 
     //  while(!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_8G))
     //  {
@@ -351,6 +365,10 @@ void loop(){
 
         //Calculate the robot position and velocity
         calculatePose();
+        
+        // UWB Update
+        uwb.update_uwb_data();
+        get_uwb();
 
         update_failsafe();
         update_cmd();
@@ -740,6 +758,14 @@ void get_cmps12(){
   // roll = roll + Gyro.XAxis * dt/1000.0;
 }
 
+void get_uwb(){
+    uwb_data.dist = uwb.get_dist();
+    uwb_data.deviation = uwb.get_deviation();
+    uwb_data.rho = uwb.get_rho();
+    uwb_data.theta = uwb.get_theta();
+}
+
+
 void write_servo(){
   // RC mode
   if (receiver_ch_value[3] < 1600) {
@@ -800,6 +826,10 @@ void update_hardware_state(){
   hardware_state_msg.mag_x = cmps12.mag_x;
   hardware_state_msg.mag_y = cmps12.mag_y;
   hardware_state_msg.mag_z = cmps12.mag_z;
+  hardware_state_msg.uwb_dist = uwb_data.dist;
+  hardware_state_msg.uwb_deviation = uwb_data.deviation;
+  hardware_state_msg.uwb_rho = uwb_data.rho;
+  hardware_state_msg.uwb_theta = uwb_data.theta;
   hardware_state_pub.publish(&hardware_state_msg);
 }
 
@@ -984,6 +1014,11 @@ void debug(){
     #ifdef EKF_DATA
     Serial.print(velocity_right); Serial.print(",");
     Serial.print(velocity_left); Serial.print(",");
+    #endif
+
+    #ifdef UWB_DATA
+    Serial.print(uwb_data.rho); Serial.print("\t");
+    Serial.print(uwb_data.theta); Serial.print("\t");
     #endif
 
     Serial.println();
